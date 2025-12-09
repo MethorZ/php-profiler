@@ -1,0 +1,7 @@
+/vendor/
+/coverage/
+/.phpunit.cache
+/.phpstan
+/.phpcs-cache
+/composer.lock
+
