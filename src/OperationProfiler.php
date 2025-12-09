@@ -10,8 +10,10 @@ use MethorZ\Profiler\Exception\ProfilingException;
  *
  * Tracks timing, memory usage, and custom metrics for operations
  * with checkpoint support. Can be globally disabled for zero overhead.
+ *
+ * Note: This class is not final to allow the NullProfiler to extend it.
  */
-final class OperationProfiler
+class OperationProfiler
 {
     private static bool $enabled = true;
 
