@@ -152,7 +152,9 @@ final class PerformanceMonitor
     {
         $memoryLimit = ini_get('memory_limit');
 
-        if ($memoryLimit === false || $memoryLimit === '-1') {
+        // PHPStan doesn't understand that ini_get can return string after false check
+        /** @phpstan-ignore-next-line identical.alwaysFalse */
+        if ($memoryLimit === false || $memoryLimit === '' || $memoryLimit === '-1') {
             return PHP_INT_MAX;
         }
 
@@ -175,4 +177,3 @@ final class PerformanceMonitor
         };
     }
 }
-

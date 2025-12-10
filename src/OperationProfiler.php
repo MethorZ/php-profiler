@@ -3,8 +3,6 @@ declare(strict_types=1);
 
 namespace MethorZ\Profiler;
 
-use MethorZ\Profiler\Exception\ProfilingException;
-
 /**
  * Main profiler for operation performance measurement.
  *
@@ -15,11 +13,8 @@ use MethorZ\Profiler\Exception\ProfilingException;
  */
 class OperationProfiler
 {
-    private static bool $enabled = true;
-
     private Timer $timer;
     private int $memoryStart;
-    private int $memoryPeakStart;
 
     /**
      * @var array<string, int>
@@ -33,12 +28,13 @@ class OperationProfiler
 
     private ?PerformanceMonitor $monitor = null;
 
+    private static bool $enabled = true;
+
     private function __construct(
         private readonly string $operation,
     ) {
         $this->timer = Timer::start();
         $this->memoryStart = memory_get_usage(true);
-        $this->memoryPeakStart = memory_get_peak_usage(true);
     }
 
     /**
@@ -105,10 +101,8 @@ class OperationProfiler
 
     /**
      * Add context information.
-     *
-     * @param mixed $value
      */
-    public function addContext(string $key, $value): void
+    public function addContext(string $key, mixed $value): void
     {
         $this->context[$key] = $value;
     }
@@ -186,9 +180,17 @@ class OperationProfiler
  * All operations are no-ops to ensure zero overhead when profiling is disabled.
  *
  * @internal
+ *
+ * phpcs:disable PSR1.Classes.ClassDeclaration.MultipleClasses
+ * phpcs:disable Squiz.Classes.ClassFileName.NoMatch
  */
 final class NullProfiler extends OperationProfiler
 {
+    /**
+     * @param string $operation Operation name (unused in null profiler)
+     *
+     * @phpstan-ignore-next-line constructor.unusedParameter
+     */
     public function __construct(string $operation)
     {
         // Don't call parent constructor (no initialization)
@@ -209,10 +211,7 @@ final class NullProfiler extends OperationProfiler
         // No-op
     }
 
-    /**
-     * @param mixed $value
-     */
-    public function addContext(string $key, $value): void
+    public function addContext(string $key, mixed $value): void
     {
         // No-op
     }
@@ -232,4 +231,3 @@ final class NullProfiler extends OperationProfiler
         return 0;
     }
 }
-

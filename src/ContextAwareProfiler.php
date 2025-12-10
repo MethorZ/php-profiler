@@ -138,20 +138,6 @@ final class ContextAwareProfiler
     }
 
     /**
-     * Detect current environment from common environment variables.
-     */
-    private function detectEnvironment(): string
-    {
-        // Check common environment variables
-        $env = getenv('APP_ENV')
-            ?: getenv('ENVIRONMENT')
-            ?: getenv('ENV')
-            ?: 'production'; // Safe default
-
-        return strtolower($env);
-    }
-
-    /**
      * Check if currently in production environment.
      */
     public function isProduction(): bool
@@ -166,5 +152,18 @@ final class ContextAwareProfiler
     {
         return PHP_SAPI === 'cli';
     }
-}
 
+    /**
+     * Detect current environment from common environment variables.
+     */
+    private function detectEnvironment(): string
+    {
+        // Check common environment variables
+        $env = getenv('APP_ENV')
+            ?: getenv('ENVIRONMENT')
+            ?: getenv('ENV')
+            ?: 'production'; // Safe default
+
+        return strtolower($env);
+    }
+}

@@ -35,6 +35,8 @@ use MethorZ\Profiler\PerformanceMonitor;
  *     }
  * }
  * ```
+ *
+ * @phpstan-ignore-next-line trait.unused
  */
 trait ProfilesOperations
 {
@@ -58,7 +60,7 @@ trait ProfilesOperations
         $profiler = OperationProfiler::start($operation, $this->profilingMonitor);
 
         // Wrap profiler to capture metrics automatically
-        return new class($profiler, $this) extends OperationProfiler {
+        return new class ($profiler, $this) extends OperationProfiler {
             public function __construct(
                 private readonly OperationProfiler $wrapped,
                 private readonly ProfilesOperations $trait,
@@ -80,10 +82,7 @@ trait ProfilesOperations
                 $this->wrapped->incrementCount($name, $increment);
             }
 
-            /**
-             * @param mixed $value
-             */
-            public function addContext(string $key, $value): void
+            public function addContext(string $key, mixed $value): void
             {
                 $this->wrapped->addContext($key, $value);
             }
@@ -141,4 +140,3 @@ trait ProfilesOperations
         $this->lastProfilingMetrics = [];
     }
 }
-

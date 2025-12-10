@@ -27,4 +27,3 @@ class ProfilingException extends RuntimeException
         return new self(sprintf('Invalid threshold "%s": %.2f', $name, $value));
     }
 }
-

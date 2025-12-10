@@ -80,4 +80,3 @@ final class SamplingProfiler
         return $this->samplingRate;
     }
 }
-

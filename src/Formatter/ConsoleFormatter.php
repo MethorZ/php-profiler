@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace MethorZ\Profiler\Formatter;
 
-use function count;
 use function sprintf;
 
 /**
@@ -27,29 +26,35 @@ final class ConsoleFormatter implements FormatterInterface
         $lines = [];
 
         // Operation name
-        if (isset($metrics['operation'])) {
+        if (isset($metrics['operation']) && is_string($metrics['operation'])) {
             $lines[] = sprintf('Operation: %s', $metrics['operation']);
         }
 
         // Total duration
-        if (isset($metrics['total'])) {
-            $lines[] = sprintf('Total: %.2fms', $metrics['total'] * 1000);
+        $total = 1.0;
+        if (isset($metrics['total']) && is_numeric($metrics['total'])) {
+            $total = (float) $metrics['total'];
+            $lines[] = sprintf('Total: %.2fms', $total * 1000);
         }
 
         // Phases
-        if (isset($metrics['phases']) && $metrics['phases'] !== []) {
+        if (isset($metrics['phases']) && is_array($metrics['phases']) && $metrics['phases'] !== []) {
             $lines[] = 'Phases:';
-            $total = $metrics['total'] ?? 1.0;
 
             foreach ($metrics['phases'] as $phase => $duration) {
-                $percentage = ($duration / $total) * 100;
-                $durationMs = $duration * 1000;
+                if (!is_numeric($duration)) {
+                    continue;
+                }
+
+                $durationFloat = (float) $duration;
+                $percentage = ($durationFloat / $total) * 100;
+                $durationMs = $durationFloat * 1000;
 
                 if ($this->showPercentages) {
                     $lines[] = sprintf(
                         '%s%s: %8.2fms (%5.1f%%)',
                         $this->indent(),
-                        $phase,
+                        (string) $phase,
                         $durationMs,
                         $percentage,
                     );
@@ -57,7 +62,7 @@ final class ConsoleFormatter implements FormatterInterface
                     $lines[] = sprintf(
                         '%s%s: %.2fms',
                         $this->indent(),
-                        $phase,
+                        (string) $phase,
                         $durationMs,
                     );
                 }
@@ -65,21 +70,22 @@ final class ConsoleFormatter implements FormatterInterface
         }
 
         // Memory
-        if (isset($metrics['memory'])) {
+        if (isset($metrics['memory']) && is_array($metrics['memory'])) {
             $memory = $metrics['memory'];
             $parts = [];
 
-            if (isset($memory['current_mb'])) {
-                $parts[] = sprintf('%.1fMB', $memory['current_mb']);
+            if (isset($memory['current_mb']) && is_numeric($memory['current_mb'])) {
+                $parts[] = sprintf('%.1fMB', (float) $memory['current_mb']);
             }
 
-            if (isset($memory['peak_mb'])) {
-                $parts[] = sprintf('peak: %.1fMB', $memory['peak_mb']);
+            if (isset($memory['peak_mb']) && is_numeric($memory['peak_mb'])) {
+                $parts[] = sprintf('peak: %.1fMB', (float) $memory['peak_mb']);
             }
 
-            if (isset($memory['delta_mb'])) {
-                $sign = $memory['delta_mb'] >= 0 ? '+' : '';
-                $parts[] = sprintf('Δ%s%.1fMB', $sign, $memory['delta_mb']);
+            if (isset($memory['delta_mb']) && is_numeric($memory['delta_mb'])) {
+                $deltaMb = (float) $memory['delta_mb'];
+                $sign = $deltaMb >= 0 ? '+' : '';
+                $parts[] = sprintf('Δ%s%.1fMB', $sign, $deltaMb);
             }
 
             if ($parts !== []) {
@@ -88,22 +94,33 @@ final class ConsoleFormatter implements FormatterInterface
         }
 
         // Counts
-        if (isset($metrics['counts']) && $metrics['counts'] !== []) {
+        if (isset($metrics['counts']) && is_array($metrics['counts']) && $metrics['counts'] !== []) {
             $counts = $metrics['counts'];
             $parts = [];
 
             foreach ($counts as $name => $value) {
-                $parts[] = sprintf('%s: %d', $name, $value);
+                if (is_numeric($value)) {
+                    $parts[] = sprintf('%s: %d', (string) $name, (int) $value);
+                }
             }
 
-            $lines[] = sprintf('Counts: %s', implode(', ', $parts));
+            if ($parts !== []) {
+                $lines[] = sprintf('Counts: %s', implode(', ', $parts));
+            }
         }
 
         // Warnings
-        if (isset($metrics['context']['warnings']) && $metrics['context']['warnings'] !== []) {
+        if (isset($metrics['context'])
+            && is_array($metrics['context'])
+            && isset($metrics['context']['warnings'])
+            && is_array($metrics['context']['warnings'])
+            && $metrics['context']['warnings'] !== []
+        ) {
             $lines[] = 'Warnings:';
             foreach ($metrics['context']['warnings'] as $warning) {
-                $lines[] = sprintf('%s⚠️  %s', $this->indent(), $warning);
+                if (is_string($warning)) {
+                    $lines[] = sprintf('%s⚠️  %s', $this->indent(), $warning);
+                }
             }
         }
 
@@ -115,4 +132,3 @@ final class ConsoleFormatter implements FormatterInterface
         return str_repeat(' ', $this->indentSize);
     }
 }
-

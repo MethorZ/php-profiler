@@ -14,7 +14,8 @@ interface StorageInterface
     /**
      * Store metrics with a unique key.
      *
-     * @param array<string, mixed> $metrics
+     * @param string $key Unique identifier for the metrics
+     * @param array<string, mixed> $metrics Metrics data to store
      */
     public function store(string $key, array $metrics): void;
 
@@ -28,7 +29,7 @@ interface StorageInterface
     /**
      * Retrieve multiple metrics by keys.
      *
-     * @param array<int, string> $keys
+     * @param array<int, string> $keys Array of metric keys
      *
      * @return array<string, array<string, mixed>>
      */
@@ -49,4 +50,3 @@ interface StorageInterface
      */
     public function clear(): void;
 }
-

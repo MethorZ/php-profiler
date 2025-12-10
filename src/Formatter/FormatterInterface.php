@@ -11,8 +11,7 @@ interface FormatterInterface
     /**
      * Format metrics for output.
      *
-     * @param array<string, mixed> $metrics
+     * @param array<string, mixed> $metrics Metrics to format
      */
     public function format(array $metrics): string;
 }
-

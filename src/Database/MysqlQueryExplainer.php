@@ -39,20 +39,24 @@ final class MysqlQueryExplainer implements QueryExplainer
         }
 
         foreach ($explainData as $row) {
+            if (!is_array($row)) {
+                continue;
+            }
+
             // Check for common issues
             if (isset($row['type']) && $row['type'] === 'ALL') {
                 return true; // Full table scan
             }
 
-            if (isset($row['Extra']) && str_contains($row['Extra'], 'Using filesort')) {
+            if (isset($row['Extra']) && is_string($row['Extra']) && str_contains($row['Extra'], 'Using filesort')) {
                 return true; // Filesort detected
             }
 
-            if (isset($row['Extra']) && str_contains($row['Extra'], 'Using temporary')) {
+            if (isset($row['Extra']) && is_string($row['Extra']) && str_contains($row['Extra'], 'Using temporary')) {
                 return true; // Temporary table detected
             }
 
-            if (isset($row['rows']) && $row['rows'] > 10000) {
+            if (isset($row['rows']) && is_numeric($row['rows']) && (int) $row['rows'] > 10000) {
                 return true; // Scanning many rows
             }
         }
@@ -69,7 +73,11 @@ final class MysqlQueryExplainer implements QueryExplainer
         $suggestions = [];
 
         foreach ($explainData as $row) {
-            $table = $row['table'] ?? 'unknown';
+            if (!is_array($row)) {
+                continue;
+            }
+
+            $table = isset($row['table']) && is_string($row['table']) ? $row['table'] : 'unknown';
 
             if (isset($row['type']) && $row['type'] === 'ALL') {
                 $suggestions[] = sprintf(
@@ -78,7 +86,11 @@ final class MysqlQueryExplainer implements QueryExplainer
                 );
             }
 
-            if (isset($row['key']) && $row['key'] === null && isset($row['possible_keys'])) {
+            if (array_key_exists('key', $row)
+                && $row['key'] === null
+                && isset($row['possible_keys'])
+                && is_string($row['possible_keys'])
+            ) {
                 $suggestions[] = sprintf(
                     'No index used on "%s" despite possible keys: %s',
                     $table,
@@ -86,30 +98,32 @@ final class MysqlQueryExplainer implements QueryExplainer
                 );
             }
 
-            if (isset($row['Extra']) && str_contains($row['Extra'], 'Using filesort')) {
+            if (isset($row['Extra']) && is_string($row['Extra']) && str_contains($row['Extra'], 'Using filesort')) {
                 $suggestions[] = sprintf(
                     'Filesort on "%s" - consider adding an index that matches ORDER BY',
                     $table,
                 );
             }
 
-            if (isset($row['Extra']) && str_contains($row['Extra'], 'Using temporary')) {
+            if (isset($row['Extra']) && is_string($row['Extra']) && str_contains($row['Extra'], 'Using temporary')) {
                 $suggestions[] = sprintf(
                     'Temporary table on "%s" - may need query optimization',
                     $table,
                 );
             }
 
-            if (isset($row['rows']) && $row['rows'] > 10000) {
-                $suggestions[] = sprintf(
-                    'High row count on "%s": %d rows examined - consider narrowing query scope',
-                    $table,
-                    $row['rows'],
-                );
+            if (isset($row['rows']) && is_numeric($row['rows'])) {
+                $rows = (int) $row['rows'];
+                if ($rows > 10000) {
+                    $suggestions[] = sprintf(
+                        'High row count on "%s": %d rows examined - consider narrowing query scope',
+                        $table,
+                        $rows,
+                    );
+                }
             }
         }
 
         return array_unique($suggestions);
     }
 }
-

@@ -133,4 +133,3 @@ final class MetricBag
             : 0.0;
     }
 }
-

@@ -29,7 +29,8 @@ final class JsonFormatter implements FormatterInterface
             $flags |= JSON_PRETTY_PRINT;
         }
 
-        return json_encode($metrics, $flags);
+        $result = json_encode($metrics, $flags);
+
+        return $result !== false ? $result : '{}';
     }
 }
-

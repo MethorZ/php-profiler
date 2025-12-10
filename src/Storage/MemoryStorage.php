@@ -63,4 +63,3 @@ final class MemoryStorage implements StorageInterface
         return $this->storage;
     }
 }
-

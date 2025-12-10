@@ -80,11 +80,15 @@ final class FileStorage implements StorageInterface
             throw new RuntimeException(sprintf('Failed to read metrics from file: %s', $filePath));
         }
 
-        $metrics = json_decode($json, true);
+        $decoded = json_decode($json, true);
 
-        if (!is_array($metrics)) {
+        if (!is_array($decoded)) {
             throw new RuntimeException(sprintf('Invalid JSON in metrics file: %s', $filePath));
         }
+
+        // Ensure we have string keys (PHPStan requirement)
+        /** @var array<string, mixed> $metrics */
+        $metrics = $decoded;
 
         // Cache for future reads
         $this->cache[$key] = $metrics;
@@ -157,4 +161,3 @@ final class FileStorage implements StorageInterface
         }
     }
 }
-
