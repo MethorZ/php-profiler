@@ -1,23 +1,21 @@
 <?php
+
 declare(strict_types=1);
 
 namespace MethorZ\Profiler;
-
-use MethorZ\Profiler\Exception\ProfilingException;
 
 /**
  * Main profiler for operation performance measurement.
  *
  * Tracks timing, memory usage, and custom metrics for operations
  * with checkpoint support. Can be globally disabled for zero overhead.
+ *
+ * Note: This class is not final to allow the NullProfiler to extend it.
  */
-final class OperationProfiler
+class OperationProfiler
 {
-    private static bool $enabled = true;
-
     private Timer $timer;
     private int $memoryStart;
-    private int $memoryPeakStart;
 
     /**
      * @var array<string, int>
@@ -31,12 +29,13 @@ final class OperationProfiler
 
     private ?PerformanceMonitor $monitor = null;
 
+    private static bool $enabled = true;
+
     private function __construct(
         private readonly string $operation,
     ) {
         $this->timer = Timer::start();
         $this->memoryStart = memory_get_usage(true);
-        $this->memoryPeakStart = memory_get_peak_usage(true);
     }
 
     /**
@@ -103,10 +102,8 @@ final class OperationProfiler
 
     /**
      * Add context information.
-     *
-     * @param mixed $value
      */
-    public function addContext(string $key, $value): void
+    public function addContext(string $key, mixed $value): void
     {
         $this->context[$key] = $value;
     }
@@ -184,33 +181,38 @@ final class OperationProfiler
  * All operations are no-ops to ensure zero overhead when profiling is disabled.
  *
  * @internal
+ *
+ * phpcs:disable PSR1.Classes.ClassDeclaration.MultipleClasses
+ * phpcs:disable Squiz.Classes.ClassFileName.NoMatch
  */
 final class NullProfiler extends OperationProfiler
 {
-    public function __construct(string $operation)
+    /**
+     * @param string $_operation Operation name (unused in null profiler)
+     *
+     * @phpstan-ignore-next-line constructor.unusedParameter
+     */
+    public function __construct(string $_operation)
     {
         // Don't call parent constructor (no initialization)
     }
 
-    public function checkpoint(string $name): void
+    public function checkpoint(string $_name): void
     {
         // No-op
     }
 
-    public function addCount(string $name, int $value): void
+    public function addCount(string $_name, int $_value): void
     {
         // No-op
     }
 
-    public function incrementCount(string $name, int $increment = 1): void
+    public function incrementCount(string $_name, int $_increment = 1): void
     {
         // No-op
     }
 
-    /**
-     * @param mixed $value
-     */
-    public function addContext(string $key, $value): void
+    public function addContext(string $_key, mixed $_value): void
     {
         // No-op
     }
@@ -230,4 +232,3 @@ final class NullProfiler extends OperationProfiler
         return 0;
     }
 }
-

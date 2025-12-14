@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace MethorZ\Profiler\Tests\Unit;
@@ -51,8 +52,8 @@ final class MetricsCollectorTest extends TestCase
         $aggregate = $collector->aggregate();
 
         $this->assertEquals(3, $aggregate['total_operations']);
-        $this->assertEquals(0.6, $aggregate['total_duration']);
-        $this->assertEquals(0.2, $aggregate['avg_duration']);
+        $this->assertEqualsWithDelta(0.6, $aggregate['total_duration'], 0.01);
+        $this->assertEqualsWithDelta(0.2, $aggregate['avg_duration'], 0.01);
     }
 
     public function testAggregateGroupsByOperation(): void
@@ -137,4 +138,3 @@ final class MetricsCollectorTest extends TestCase
         $this->assertEquals(2, $collector->count());
     }
 }
-

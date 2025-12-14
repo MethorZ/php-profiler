@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace MethorZ\Profiler\Tests\Unit;
@@ -93,7 +94,8 @@ final class OperationProfilerTest extends TestCase
     {
         $profiler = OperationProfiler::start('test_operation');
         // Allocate some memory
-        $data = array_fill(0, 10000, 'test');
+        $data = array_fill(0, 10000, 'test'); // phpcs:ignore Squiz.PHP.DisallowMultipleAssignments.Found
+        unset($data); // Force memory to be used
         $profiler->checkpoint('after_allocation');
 
         $metrics = $profiler->end();
@@ -163,4 +165,3 @@ final class OperationProfilerTest extends TestCase
         $this->assertTrue(OperationProfiler::isEnabled());
     }
 }
-

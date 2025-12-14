@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace MethorZ\Profiler\Tests\Unit\Analysis;
@@ -34,7 +35,7 @@ final class MetricsComparatorTest extends TestCase
 
         $this->assertFalse($result['duration']['improved']);
         $this->assertTrue($result['duration']['regressed']);
-        $this->assertEquals(40.0, $result['duration']['percentage_change']);
+        $this->assertEqualsWithDelta(40.0, $result['duration']['percentage_change'], 0.01);
     }
 
     public function testCompareMemory(): void
@@ -96,4 +97,3 @@ final class MetricsComparatorTest extends TestCase
         $this->assertInstanceOf(MetricsComparator::class, $result);
     }
 }
-

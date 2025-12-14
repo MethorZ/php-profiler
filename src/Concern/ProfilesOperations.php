@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace MethorZ\Profiler\Concern;
@@ -35,6 +36,8 @@ use MethorZ\Profiler\PerformanceMonitor;
  *     }
  * }
  * ```
+ *
+ * @phpstan-ignore-next-line trait.unused
  */
 trait ProfilesOperations
 {
@@ -58,10 +61,17 @@ trait ProfilesOperations
         $profiler = OperationProfiler::start($operation, $this->profilingMonitor);
 
         // Wrap profiler to capture metrics automatically
-        return new class($profiler, $this) extends OperationProfiler {
+        $captureMetrics = function (array $metrics): void {
+            $this->lastProfilingMetrics = $metrics;
+        };
+
+        return new class ($profiler, $captureMetrics) extends OperationProfiler {
+            /**
+             * @param \Closure(array): void $captureMetrics
+             */
             public function __construct(
                 private readonly OperationProfiler $wrapped,
-                private readonly ProfilesOperations $trait,
+                private readonly \Closure $captureMetrics,
             ) {
             }
 
@@ -80,10 +90,7 @@ trait ProfilesOperations
                 $this->wrapped->incrementCount($name, $increment);
             }
 
-            /**
-             * @param mixed $value
-             */
-            public function addContext(string $key, $value): void
+            public function addContext(string $key, mixed $value): void
             {
                 $this->wrapped->addContext($key, $value);
             }
@@ -91,7 +98,7 @@ trait ProfilesOperations
             public function end(): array
             {
                 $metrics = $this->wrapped->end();
-                $this->trait->lastProfilingMetrics = $metrics;
+                ($this->captureMetrics)($metrics);
                 return $metrics;
             }
 
@@ -141,4 +148,3 @@ trait ProfilesOperations
         $this->lastProfilingMetrics = [];
     }
 }
-

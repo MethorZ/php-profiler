@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace MethorZ\Profiler\Tests\Integration;
@@ -11,22 +12,21 @@ use MethorZ\Profiler\PerformanceMonitor;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Integration test simulating real-world usage patterns
- * based on the bank-salt project implementation.
+ * Integration test simulating real-world usage patterns.
  */
 final class RealWorldUsageTest extends TestCase
 {
     public function testDatabaseRepositoryPattern(): void
     {
         $repository = new MockDatabaseRepository();
-        $repository->setProfilingMonitor(
+        $repository->setMonitor(
             PerformanceMonitor::create()
                 ->setSlowOperationThreshold(0.5)
                 ->setHighRowCountThreshold(1000),
         );
 
         // Fetch data
-        $result = $repository->fetchTransactionsByAccounts(['ACC001', 'ACC002']);
+        $result = $repository->fetchRecordsByIds(['ID001', 'ID002']);
 
         // Verify results
         $this->assertNotEmpty($result);
@@ -49,15 +49,15 @@ final class RealWorldUsageTest extends TestCase
 
         // Process multiple batches
         $batches = [
-            ['ACC001', 'ACC002'],
-            ['ACC003', 'ACC004', 'ACC005'],
-            ['ACC006'],
+            ['ID001', 'ID002'],
+            ['ID003', 'ID004', 'ID005'],
+            ['ID006'],
         ];
 
         foreach ($batches as $batch) {
-            $repository->fetchTransactionsByAccounts($batch);
+            $repository->fetchRecordsByIds($batch);
             $metrics = $repository->getLastQueryMetrics();
-            $collector->record('fetch_transactions', $metrics);
+            $collector->record('fetch_records', $metrics);
         }
 
         // Aggregate
@@ -65,13 +65,13 @@ final class RealWorldUsageTest extends TestCase
 
         $this->assertEquals(3, $aggregate['total_operations']);
         $this->assertGreaterThan(0, $aggregate['total_duration']);
-        $this->assertArrayHasKey('fetch_transactions', $aggregate['by_operation']);
+        $this->assertArrayHasKey('fetch_records', $aggregate['by_operation']);
     }
 
     public function testConsoleFormatterOutput(): void
     {
         $repository = new MockDatabaseRepository();
-        $repository->fetchTransactionsByAccounts(['ACC001']);
+        $repository->fetchRecordsByIds(['ID001']);
 
         $metrics = $repository->getLastQueryMetrics();
         $formatter = new ConsoleFormatter();
@@ -103,29 +103,36 @@ final class RealWorldUsageTest extends TestCase
 }
 
 /**
- * Mock repository simulating the bank-salt TransactionDetailRepository pattern.
+ * Mock repository demonstrating profiling integration pattern.
+ *
+ * phpcs:disable PSR1.Classes.ClassDeclaration.MultipleClasses
  */
 class MockDatabaseRepository
 {
     use ProfilesOperations;
 
+    public function setMonitor(?PerformanceMonitor $monitor): void
+    {
+        $this->setProfilingMonitor($monitor);
+    }
+
     /**
-     * @param array<int, string> $accountNumbers
+     * @param array<int, string> $ids
      *
      * @return array<int, array<string, mixed>>
      */
-    public function fetchTransactionsByAccounts(array $accountNumbers): array
+    public function fetchRecordsByIds(array $ids): array
     {
-        $profiler = $this->startProfiling('fetch_transactions');
+        $profiler = $this->startProfiling('fetch_records');
 
         try {
             // Phase 1: Query preparation
             $profiler->checkpoint('prep');
-            $this->simulateQueryPreparation($accountNumbers);
+            $this->simulateQueryPreparation($ids);
 
             // Phase 2: Query execution
             $profiler->checkpoint('exec');
-            $rawData = $this->simulateQueryExecution($accountNumbers);
+            $rawData = $this->simulateQueryExecution($ids);
 
             // Phase 3: Fetch results
             $profiler->checkpoint('fetch');
@@ -133,13 +140,13 @@ class MockDatabaseRepository
 
             // Phase 4: Hydrate objects
             $profiler->checkpoint('hydrate');
-            $transactions = $this->simulateHydration($rows);
+            $records = $this->simulateHydration($rows);
 
-            $profiler->addCount('accounts', count($accountNumbers));
-            $profiler->addCount('rows', count($transactions));
+            $profiler->addCount('ids', count($ids));
+            $profiler->addCount('rows', count($records));
             $profiler->addContext('query_type', 'SELECT');
 
-            return $transactions;
+            return $records;
         } finally {
             $profiler->end();
         }
@@ -151,20 +158,20 @@ class MockDatabaseRepository
     }
 
     /**
-     * @param array<int, string> $accountNumbers
+     * @param array<int, string> $_ids
      */
-    private function simulateQueryPreparation(array $accountNumbers): void
+    private function simulateQueryPreparation(array $_ids): void
     {
         // Simulate query building
         usleep(500);
     }
 
     /**
-     * @param array<int, string> $accountNumbers
+     * @param array<int, string> $_ids
      *
      * @return array<string, mixed>
      */
-    private function simulateQueryExecution(array $accountNumbers): array
+    private function simulateQueryExecution(array $_ids): array
     {
         // Simulate database query
         usleep(2000);
@@ -172,15 +179,15 @@ class MockDatabaseRepository
     }
 
     /**
-     * @param array<string, mixed> $rawData
+     * @param array<string, mixed> $_rawData
      *
      * @return array<int, array<string, mixed>>
      */
-    private function simulateFetchResults(array $rawData): array
+    private function simulateFetchResults(array $_rawData): array
     {
         // Simulate fetching rows
         usleep(1000);
-        return array_fill(0, 10, ['id' => 1, 'amount' => 100.0]);
+        return array_fill(0, 10, ['id' => 1, 'value' => 100.0]);
     }
 
     /**
@@ -195,4 +202,3 @@ class MockDatabaseRepository
         return $rows;
     }
 }
-

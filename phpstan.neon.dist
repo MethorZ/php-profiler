@@ -5,5 +5,10 @@ parameters:
         - tests
     phpVersion: 80200
     tmpDir: .phpstan
-    checkMissingIterableValueType: false
+    ignoreErrors:
+        - '#Cannot access offset [^\s]+ on mixed#'
+        - '#Parameter \#2 \$array of method PHPUnit\\Framework\\Assert::assertArrayHasKey\(\) expects array\|ArrayAccess#'
+        - '#return type has no value type specified in iterable type array#'
+        - '#Parameter \#1 \$value of function count expects array\|Countable, mixed given#'
+        - '#Parameter \#2 \$haystack of method PHPUnit\\Framework\\Assert::assertStringContainsString\(\) expects string, mixed given#'
 

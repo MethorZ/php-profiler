@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace MethorZ\Profiler\Tests\Unit;
@@ -88,7 +89,6 @@ final class ContextAwareProfilerTest extends TestCase
 
         $opProfiler = $profiler->start('test_operation');
 
-        $this->assertInstanceOf(\Bank\PerformanceProfiler\OperationProfiler::class, $opProfiler);
+        $this->assertInstanceOf(\MethorZ\Profiler\OperationProfiler::class, $opProfiler);
     }
 }
-

@@ -54,26 +54,26 @@ $metrics = $profiler->end();
 ```php
 use MethorZ\Profiler\Concern\ProfilesOperations;
 
-class TransactionRepository
+class UserRepository
 {
     use ProfilesOperations;
 
-    public function fetchTransactions(array $accounts): array
+    public function fetchUsers(array $ids): array
     {
-        $profiler = $this->startProfiling('fetch_transactions');
+        $profiler = $this->startProfiling('fetch_users');
 
         try {
             $profiler->checkpoint('prep');
-            $query = $this->buildQuery($accounts);
+            $query = $this->buildQuery($ids);
 
             $profiler->checkpoint('exec');
             $result = $this->dal->execute($query);
 
             $profiler->checkpoint('hydrate');
-            $transactions = $this->hydrate($result);
+            $users = $this->hydrate($result);
 
-            $profiler->addCount('rows', count($transactions));
-            return $transactions;
+            $profiler->addCount('rows', count($users));
+            return $users;
         } finally {
             $profiler->end();
         }
@@ -247,14 +247,14 @@ echo $formatter->format($metrics);
 
 Output:
 ```
-Operation: fetch_transactions
+Operation: fetch_users
 Total: 125.50ms
 Phases:
   prep:      3.20ms (2.5%)
   exec:    100.10ms (79.7%)
   hydrate:  22.20ms (17.7%)
 Memory: 45.2MB (peak: 48.7MB, Δ+3.5MB)
-Counts: accounts: 150, rows: 2340
+Counts: ids: 150, rows: 2340
 ```
 
 ### JSON Export
