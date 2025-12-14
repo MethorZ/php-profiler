@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace MethorZ\Profiler\Tests\Unit\Formatter;
@@ -142,4 +143,3 @@ final class ConsoleFormatterTest extends TestCase
         $this->assertStringContainsString('    prep:', $output);
     }
 }
-

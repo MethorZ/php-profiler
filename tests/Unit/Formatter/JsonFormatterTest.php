@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace MethorZ\Profiler\Tests\Unit\Formatter;
@@ -77,4 +78,3 @@ final class JsonFormatterTest extends TestCase
         $this->assertStringContainsString('test_üöä', $output);
     }
 }
-

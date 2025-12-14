@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace MethorZ\Profiler\Storage;
@@ -63,4 +64,3 @@ final class MemoryStorage implements StorageInterface
         return $this->storage;
     }
 }
-

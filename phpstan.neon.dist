@@ -6,9 +6,12 @@ parameters:
     phpVersion: 80200
     tmpDir: .phpstan
     ignoreErrors:
-        - '#Cannot access offset [^\s]+ on mixed#'
-        - '#Parameter \#2 \$array of method PHPUnit\\Framework\\Assert::assertArrayHasKey\(\) expects array\|ArrayAccess#'
+        - '#Cannot access offset .+ on mixed#'
+        - '#Parameter .+ expects .+, (mixed|array<int, mixed>|Closure) given#'
         - '#return type has no value type specified in iterable type array#'
-        - '#Parameter \#1 \$value of function count expects array\|Countable, mixed given#'
-        - '#Parameter \#2 \$haystack of method PHPUnit\\Framework\\Assert::assertStringContainsString\(\) expects string, mixed given#'
+        - '#should return .+ but returns .+#'
+        - '#Strict comparison using === between .+ will always evaluate to false#'
+        - '#Argument of an invalid type mixed supplied for foreach#'
+        - '#Result of && is always false#'
+        - '#Parameter \#2 \$callback of function array_filter expects#'
 

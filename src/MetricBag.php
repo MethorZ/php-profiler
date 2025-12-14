@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace MethorZ\Profiler;
@@ -133,4 +134,3 @@ final class MetricBag
             : 0.0;
     }
 }
-

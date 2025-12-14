@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace MethorZ\Profiler;
@@ -167,4 +168,3 @@ final class ContextAwareProfiler
         return PHP_SAPI === 'cli';
     }
 }
-

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace MethorZ\Profiler\Tests\Unit;
@@ -73,4 +74,3 @@ final class SamplingProfilerTest extends TestCase
         $this->assertEquals(0.25, $profiler->getSamplingRate());
     }
 }
-

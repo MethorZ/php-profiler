@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace MethorZ\Profiler\Database;
@@ -112,4 +113,3 @@ final class MysqlQueryExplainer implements QueryExplainer
         return array_unique($suggestions);
     }
 }
-

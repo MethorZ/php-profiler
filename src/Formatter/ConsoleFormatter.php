@@ -1,9 +1,9 @@
 <?php
+
 declare(strict_types=1);
 
 namespace MethorZ\Profiler\Formatter;
 
-use function count;
 use function sprintf;
 
 /**
@@ -115,4 +115,3 @@ final class ConsoleFormatter implements FormatterInterface
         return str_repeat(' ', $this->indentSize);
     }
 }
-

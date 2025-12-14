@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace MethorZ\Profiler\Exception;
@@ -27,4 +28,3 @@ class ProfilingException extends RuntimeException
         return new self(sprintf('Invalid threshold "%s": %.2f', $name, $value));
     }
 }
-

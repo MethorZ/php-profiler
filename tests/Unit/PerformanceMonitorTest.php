@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace MethorZ\Profiler\Tests\Unit;
@@ -166,4 +167,3 @@ final class PerformanceMonitorTest extends TestCase
         $this->assertInstanceOf(PerformanceMonitor::class, $monitor);
     }
 }
-

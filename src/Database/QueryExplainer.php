@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace MethorZ\Profiler\Database;
@@ -34,4 +35,3 @@ interface QueryExplainer
      */
     public function getSuggestions(array $explainData): array;
 }
-

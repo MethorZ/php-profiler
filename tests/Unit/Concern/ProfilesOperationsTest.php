@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace MethorZ\Profiler\Tests\Unit\Concern;
@@ -141,4 +142,3 @@ final class ProfilesOperationsTest extends TestCase
         $this->assertEquals(100, $metrics2['counts']['rows']);
     }
 }
-

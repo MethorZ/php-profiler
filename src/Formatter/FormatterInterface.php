@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace MethorZ\Profiler\Formatter;
@@ -15,4 +16,3 @@ interface FormatterInterface
      */
     public function format(array $metrics): string;
 }
-

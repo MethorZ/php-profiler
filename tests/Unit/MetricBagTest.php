@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace MethorZ\Profiler\Tests\Unit;
@@ -121,4 +122,3 @@ final class MetricBagTest extends TestCase
         $this->assertArrayNotHasKey('context', $array);
     }
 }
-

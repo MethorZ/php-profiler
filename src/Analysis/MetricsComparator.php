@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace MethorZ\Profiler\Analysis;
@@ -212,4 +213,3 @@ final class MetricsComparator
         ];
     }
 }
-

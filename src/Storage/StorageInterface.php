@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace MethorZ\Profiler\Storage;
@@ -49,4 +50,3 @@ interface StorageInterface
      */
     public function clear(): void;
 }
-

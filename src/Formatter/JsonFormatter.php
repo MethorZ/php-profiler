@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace MethorZ\Profiler\Formatter;
@@ -32,4 +33,3 @@ final class JsonFormatter implements FormatterInterface
         return json_encode($metrics, $flags);
     }
 }
-

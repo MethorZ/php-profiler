@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace MethorZ\Profiler\Tests\Unit;
@@ -107,4 +108,3 @@ final class TimerTest extends TestCase
         $this->assertEquals($elapsed1, $elapsed2);
     }
 }
-

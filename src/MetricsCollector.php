@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace MethorZ\Profiler;
@@ -188,4 +189,3 @@ final class MetricsCollector
         return count($this->operations);
     }
 }
-

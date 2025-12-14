@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace MethorZ\Profiler\Tests\Unit\Storage;
@@ -86,4 +87,3 @@ final class MemoryStorageTest extends TestCase
         $this->assertArrayHasKey('key2', $all);
     }
 }
-
