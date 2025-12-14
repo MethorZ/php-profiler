@@ -115,21 +115,30 @@ final class PerformanceMonitorTest extends TestCase
 
     public function testCheckThresholdsDetectsHighMemory(): void
     {
-        $monitor = PerformanceMonitor::create()
-            ->setHighMemoryThreshold(0.01); // 1% - very low for testing
+        // Save original memory_limit and set a known limit for testing
+        $originalLimit = ini_get('memory_limit');
+        ini_set('memory_limit', '128M'); // Set a known limit
 
-        // Use current memory (should exceed 1% of limit)
-        $memory = [
-            'current' => memory_get_usage(true),
-            'peak' => memory_get_peak_usage(true),
-            'delta' => 0,
-        ];
+        try {
+            $monitor = PerformanceMonitor::create()
+                ->setHighMemoryThreshold(0.50); // 50% threshold
 
-        $metrics = new MetricBag('test', 0.1, [], $memory);
-        $warnings = $monitor->checkThresholds($metrics);
+            // Use 100MB which is 78% of 128MB limit
+            $memory = [
+                'current' => 104857600, // 100MB
+                'peak' => 104857600,
+                'delta' => 0,
+            ];
 
-        $this->assertNotEmpty($warnings);
-        $this->assertStringContainsString('High memory usage', $warnings[0]);
+            $metrics = new MetricBag('test', 0.1, [], $memory);
+            $warnings = $monitor->checkThresholds($metrics);
+
+            $this->assertNotEmpty($warnings);
+            $this->assertStringContainsString('High memory usage', $warnings[0]);
+        } finally {
+            // Restore original memory_limit
+            ini_set('memory_limit', $originalLimit);
+        }
     }
 
     public function testCheckThresholdsDetectsHighRowCount(): void
