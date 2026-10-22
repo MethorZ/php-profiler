@@ -15,6 +15,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - PHPStan analyses against the runtime PHP version (removed the `phpVersion: 80200` pin).
 - `MetricsComparator`, `MetricsCollector` and `ConsoleFormatter` throw `ProfilingException` for non-numeric metric values instead of a PHP `TypeError`. Numeric strings are still accepted.
 
+## [1.0.1] - 2025-12-14
+
+### Fixed
+- Type errors in the `ProfilesOperations` trait.
+- Floating-point precision in timing tests (`assertEqualsWithDelta`).
+- Namespace reference in `ContextAwareProfilerTest` and protected method access in `RealWorldUsageTest`.
+
+### Changed
+- CI uploads coverage to Codecov with a token; removed deprecated PHPStan options and strict coverage requirements from the PHPUnit configuration.
+- Examples use a generic `UserRepository` and no longer reference a specific project.
+
 ## [1.0.0] - 2025-12-10
 
 ### Added
