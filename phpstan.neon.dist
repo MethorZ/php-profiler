@@ -3,7 +3,6 @@ parameters:
     paths:
         - src
         - tests
-    phpVersion: 80200
     tmpDir: .phpstan
     ignoreErrors:
         - '#Cannot access offset .+ on mixed#'

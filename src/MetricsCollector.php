@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace MethorZ\Profiler;
 
+use MethorZ\Profiler\Concern\NormalizesMetricValues;
+
 /**
  * Collects and aggregates metrics across multiple operations.
  *
@@ -12,6 +14,8 @@ namespace MethorZ\Profiler;
  */
 final class MetricsCollector
 {
+    use NormalizesMetricValues;
+
     /**
      * @var array<int, array{operation: string, metrics: array<string, mixed>, timestamp: int}>
      */
@@ -67,8 +71,8 @@ final class MetricsCollector
             $operation = $entry['operation'];
             $metrics = $entry['metrics'];
 
-            $duration = $metrics['total'] ?? 0.0;
-            $memory = $metrics['memory']['current'] ?? 0;
+            $duration = (float) $this->toNumber($metrics['total'] ?? 0.0, 'total');
+            $memory = $this->toNumber($metrics['memory']['current'] ?? 0, 'memory.current');
 
             $totalDuration += $duration;
             $totalMemory += $memory;

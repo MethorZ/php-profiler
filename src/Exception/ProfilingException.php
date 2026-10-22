@@ -27,4 +27,9 @@ class ProfilingException extends RuntimeException
     {
         return new self(sprintf('Invalid threshold "%s": %.2f', $name, $value));
     }
+
+    public static function invalidMetric(string $name, mixed $value): self
+    {
+        return new self(sprintf('Metric "%s" must be numeric, %s given', $name, get_debug_type($value)));
+    }
 }

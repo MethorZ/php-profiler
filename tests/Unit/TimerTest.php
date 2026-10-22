@@ -55,8 +55,8 @@ final class TimerTest extends TestCase
 
         $this->assertArrayHasKey('total', $result);
         $this->assertArrayHasKey('checkpoints', $result);
-        $this->assertIsFloat($result['total']);
-        $this->assertIsArray($result['checkpoints']);
+        $this->assertGreaterThanOrEqual(0.0, $result['total']);
+        $this->assertSame(['prep', 'exec'], array_keys($result['checkpoints']));
     }
 
     public function testEndMarksTimerAsEnded(): void

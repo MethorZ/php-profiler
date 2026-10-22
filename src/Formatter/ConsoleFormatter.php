@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace MethorZ\Profiler\Formatter;
 
+use MethorZ\Profiler\Concern\NormalizesMetricValues;
+
 use function sprintf;
 
 /**
@@ -11,6 +13,8 @@ use function sprintf;
  */
 final class ConsoleFormatter implements FormatterInterface
 {
+    use NormalizesMetricValues;
+
     private bool $showPercentages = true;
     private int $indentSize = 2;
 
@@ -33,15 +37,16 @@ final class ConsoleFormatter implements FormatterInterface
 
         // Total duration
         if (isset($metrics['total'])) {
-            $lines[] = sprintf('Total: %.2fms', $metrics['total'] * 1000);
+            $lines[] = sprintf('Total: %.2fms', $this->toNumber($metrics['total'], 'total') * 1000);
         }
 
         // Phases
         if (isset($metrics['phases']) && $metrics['phases'] !== []) {
             $lines[] = 'Phases:';
-            $total = $metrics['total'] ?? 1.0;
+            $total = $this->toNumber($metrics['total'] ?? 1.0, 'total');
 
-            foreach ($metrics['phases'] as $phase => $duration) {
+            foreach ($metrics['phases'] as $phase => $rawDuration) {
+                $duration = $this->toNumber($rawDuration ?? 0.0, sprintf('phases.%s', $phase));
                 $percentage = ($duration / $total) * 100;
                 $durationMs = $duration * 1000;
 

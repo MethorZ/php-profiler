@@ -22,9 +22,9 @@ final class ProfilesOperationsTest extends TestCase
             }
         };
 
-        $object->testMethod();
+        $this->expectNotToPerformAssertions();
 
-        $this->assertTrue(true); // No exception thrown
+        $object->testMethod();
     }
 
     public function testGetLastProfilingMetricsReturnsStoredMetrics(): void

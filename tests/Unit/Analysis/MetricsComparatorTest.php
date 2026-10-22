@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace MethorZ\Profiler\Tests\Unit\Analysis;
 
 use MethorZ\Profiler\Analysis\MetricsComparator;
+use MethorZ\Profiler\Exception\ProfilingException;
 use PHPUnit\Framework\TestCase;
 
 final class MetricsComparatorTest extends TestCase
@@ -95,5 +96,15 @@ final class MetricsComparatorTest extends TestCase
         $result = $comparator->setRegressionThreshold(0.2);
 
         $this->assertInstanceOf(MetricsComparator::class, $result);
+    }
+
+    public function testCompareRejectsNonNumericMetric(): void
+    {
+        $comparator = new MetricsComparator();
+
+        $this->expectException(ProfilingException::class);
+        $this->expectExceptionMessage('Metric "total" must be numeric, string given');
+
+        $comparator->compare(['total' => 'fast'], ['total' => 0.5]);
     }
 }

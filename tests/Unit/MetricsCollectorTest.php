@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MethorZ\Profiler\Tests\Unit;
 
+use MethorZ\Profiler\Exception\ProfilingException;
 use MethorZ\Profiler\MetricsCollector;
 use PHPUnit\Framework\TestCase;
 
@@ -136,5 +137,16 @@ final class MetricsCollectorTest extends TestCase
 
         $collector->record('op2', ['total' => 0.2]);
         $this->assertEquals(2, $collector->count());
+    }
+
+    public function testAggregateRejectsNonNumericMetric(): void
+    {
+        $collector = new MetricsCollector();
+        $collector->record('op', ['total' => 0.1, 'memory' => ['current' => '1MB']]);
+
+        $this->expectException(ProfilingException::class);
+        $this->expectExceptionMessage('Metric "memory.current" must be numeric, string given');
+
+        $collector->aggregate();
     }
 }

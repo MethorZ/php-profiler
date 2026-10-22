@@ -125,7 +125,7 @@ final class ContextAwareProfiler
                 'sampling_rate' => $this->forceSamplingRate ?? 0.1, // 10% sampling
                 'reason' => 'Production CLI with sampling',
             ],
-            $env === 'production' && !$isCLI => [
+            $env === 'production' => [
                 'enabled' => false,
                 'sampling_rate' => 0.0,
                 'reason' => 'Production web (disabled)',

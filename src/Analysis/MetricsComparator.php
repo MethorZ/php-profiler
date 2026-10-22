@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace MethorZ\Profiler\Analysis;
 
+use MethorZ\Profiler\Concern\NormalizesMetricValues;
+
 use function count;
 
 /**
@@ -13,6 +15,8 @@ use function count;
  */
 final class MetricsComparator
 {
+    use NormalizesMetricValues;
+
     private float $regressionThreshold = 0.1; // 10% slower is regression
 
     public function setRegressionThreshold(float $threshold): self
@@ -53,8 +57,8 @@ final class MetricsComparator
      */
     private function compareDuration(array $before, array $after): array
     {
-        $beforeTotal = $before['total'] ?? 0.0;
-        $afterTotal = $after['total'] ?? 0.0;
+        $beforeTotal = $this->toNumber($before['total'] ?? 0.0, 'total');
+        $afterTotal = $this->toNumber($after['total'] ?? 0.0, 'total');
 
         $absolute = $afterTotal - $beforeTotal;
         $percentage = $beforeTotal > 0 ? ($absolute / $beforeTotal) * 100 : 0.0;
@@ -77,8 +81,8 @@ final class MetricsComparator
      */
     private function compareMemory(array $before, array $after): array
     {
-        $beforeMemory = $before['memory']['current'] ?? 0;
-        $afterMemory = $after['memory']['current'] ?? 0;
+        $beforeMemory = $this->toNumber($before['memory']['current'] ?? 0, 'memory.current');
+        $afterMemory = $this->toNumber($after['memory']['current'] ?? 0, 'memory.current');
 
         $absolute = $afterMemory - $beforeMemory;
         $percentage = $beforeMemory > 0 ? ($absolute / $beforeMemory) * 100 : 0.0;
@@ -107,8 +111,8 @@ final class MetricsComparator
         $comparison = [];
 
         foreach ($allPhases as $phase) {
-            $beforeDuration = $beforePhases[$phase] ?? 0.0;
-            $afterDuration = $afterPhases[$phase] ?? 0.0;
+            $beforeDuration = $this->toNumber($beforePhases[$phase] ?? 0.0, 'phases.' . $phase);
+            $afterDuration = $this->toNumber($afterPhases[$phase] ?? 0.0, 'phases.' . $phase);
 
             $absolute = $afterDuration - $beforeDuration;
             $percentage = $beforeDuration > 0 ? ($absolute / $beforeDuration) * 100 : 0.0;
@@ -140,8 +144,8 @@ final class MetricsComparator
         $comparison = [];
 
         foreach ($allCounts as $name) {
-            $beforeValue = $beforeCounts[$name] ?? 0;
-            $afterValue = $afterCounts[$name] ?? 0;
+            $beforeValue = $this->toNumber($beforeCounts[$name] ?? 0, 'counts.' . $name);
+            $afterValue = $this->toNumber($afterCounts[$name] ?? 0, 'counts.' . $name);
 
             $comparison[$name] = [
                 'before' => $beforeValue,

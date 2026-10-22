@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-10-22
+
+### Changed
+- PHP requirement raised to `~8.4.27 || ~8.5.12` (releases patched for php2shell: CVE-2026-109618, CVE-2026-109619). PHP 8.2 and 8.3 are no longer supported.
+- Updated development dependencies: phpunit/phpunit ^13.4, phpstan/phpstan ^2.3 (from 1.x), squizlabs/php_codesniffer ^4.0.1 (from 3.x), slevomat/coding-standard ^8.31.
+- PHPStan analyses against the runtime PHP version (removed the `phpVersion: 80200` pin).
+- `MetricsComparator`, `MetricsCollector` and `ConsoleFormatter` throw `ProfilingException` for non-numeric metric values instead of a PHP `TypeError`. Numeric strings are still accepted.
+
+## [1.0.0] - 2025-12-10
+
 ### Added
 - Initial release v1.0.0
 - **Core Profiling**:

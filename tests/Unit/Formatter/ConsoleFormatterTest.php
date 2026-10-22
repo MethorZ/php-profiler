@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MethorZ\Profiler\Tests\Unit\Formatter;
 
+use MethorZ\Profiler\Exception\ProfilingException;
 use MethorZ\Profiler\Formatter\ConsoleFormatter;
 use PHPUnit\Framework\TestCase;
 
@@ -141,5 +142,25 @@ final class ConsoleFormatterTest extends TestCase
 
         // Should have 4 spaces of indentation
         $this->assertStringContainsString('    prep:', $output);
+    }
+
+    public function testFormatRejectsNonNumericPhaseDuration(): void
+    {
+        $formatter = new ConsoleFormatter();
+
+        $this->expectException(ProfilingException::class);
+        $this->expectExceptionMessage('Metric "phases.prep" must be numeric, array given');
+
+        $formatter->format(['total' => 0.100, 'phases' => ['prep' => []]]);
+    }
+
+    public function testFormatTreatsNullPhaseDurationAsZero(): void
+    {
+        $formatter = new ConsoleFormatter();
+
+        $output = $formatter->format(['total' => 0.100, 'phases' => ['prep' => null, 'exec' => 0.100]]);
+
+        $this->assertStringContainsString('0.0%', $output);
+        $this->assertStringContainsString('100.0%', $output);
     }
 }
